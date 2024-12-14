@@ -8,10 +8,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: "#ffd33d",
         headerStyle: { backgroundColor: "#25292e" },
         headerShadowVisible: false,
-        headerTintColor: '#fff',
+        headerTintColor: "#fff",
         tabBarStyle: {
-          backgroundColor: '#25292e',
-          },
+          backgroundColor: "#25292e",
+        },
       }}
     >
       <Tabs.Screen
@@ -19,11 +19,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
-              color={color}
-              size={24}
-            />
+            <Ionicons name={focused ? "home-sharp" : "home-outline"} color={color} size={24} />
           ),
         }}
       />
@@ -33,9 +29,7 @@ export default function TabLayout() {
           title: "About",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name={focused ? "information-circle" : "information-circle-outline"}
               color={color}
               size={24}
             />

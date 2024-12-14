@@ -4,6 +4,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 type Props = {
   label: string;
   theme?: "primary";
+  onPress?: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -43,7 +44,7 @@ export default function Button(props: Props) {
       >
         <Pressable
           style={[styles.button, { backgroundColor: "#fff" }]}
-          onPress={() => alert("You pressed a button.")}
+          onPress={props.onPress}
         >
           <FontAwesome
             name="picture-o"
@@ -61,7 +62,7 @@ export default function Button(props: Props) {
 
   return (
     <View style={styles.buttonContainer}>
-      <Pressable style={styles.button} onPress={() => alert("хуй")}>
+      <Pressable style={styles.button} onPress={props.onPress}>
         <Text style={styles.buttonLabel}>{props.label}</Text>
       </Pressable>
     </View>
