@@ -7,7 +7,11 @@ import {
   NativeTouchEvent,
 } from "react-native";
 import {
+    BorderTypes,
   ColormapTypes,
+  DataTypes,
+  DecompTypes,
+  InterpolationFlags,
   LineTypes,
   ObjectType,
   OpenCV,
@@ -33,16 +37,46 @@ export function ExtendedCropper() {
   const [imgBase64, setImgBase64] = useState<string>(blankImageBase64);
 
   const onPess = (event: NativeTouchEvent) => {
-    const src = OpenCV.base64ToMat(blankImageBase64);
-    const center = OpenCV.createObject(
-      ObjectType.Point,
-      event.locationX,
-      event.locationY
+    const width = 300;
+    const height = 150;
+    const srcPoints = [
+      [114, 80], // Top-left
+      [324, 46], // Top-right
+      [77, 203], // Bottom-left
+      [306, 252], // Bottom-right
+    ];
+    const dstPoints = [
+      [0, 0], // Top-left
+      [width - 1, 0], // Top-right
+      [0, height - 1], // Bottom-left
+      [width - 1, height - 1], // Bottom-right
+    ];
+    const srcVector = OpenCV.createObject(
+      ObjectType.Point2fVector,
+      srcPoints.map((point) =>
+        OpenCV.createObject(ObjectType.Point2f, point[0], point[1])
+      )
     );
-    const color = OpenCV.createObject(ObjectType.Scalar, 255, 0, 0);
-
-    OpenCV.invoke("circle", src, center, 5, color, -1, LineTypes.FILLED);
-    const result = OpenCV.toJSValue(src);
+    const distVector = OpenCV.createObject(
+      ObjectType.Point2fVector,
+      dstPoints.map((point) =>
+        OpenCV.createObject(ObjectType.Point2f, point[0], point[1])
+      )
+    );
+    const tranformationMat = OpenCV.invoke('getPerspectiveTransform', srcVector, distVector, DecompTypes.DECOMP_LU);
+    const src = OpenCV.base64ToMat(imgBase64);
+    const dst = OpenCV.createObject(ObjectType.Mat, 0, 0, DataTypes.CV_8U);
+    OpenCV.invoke(
+        'warpPerspective',
+        src,
+        dst,
+        tranformationMat,
+        OpenCV.createObject(ObjectType.Size, width, height),
+        InterpolationFlags.INTER_LINEAR,
+        BorderTypes.BORDER_CONSTANT,
+        OpenCV.createObject(ObjectType.Scalar, 0),
+    );
+    const result = OpenCV.toJSValue(dst);
     setImgBase64(result.base64);
     OpenCV.clearBuffers();
   };
